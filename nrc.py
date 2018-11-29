@@ -16,18 +16,14 @@ def mid(s, offset, amount):
     return s[offset:offset+amount]
 
 def getDate(s):
-    # Because we know the format of the string, this is generally safe to do
+    print("The build date is " + mid(s, 27, len(s)-27-2))
+    # Because we know the format of the string, this is safe to do
     # (e.g. swift-4.2-DEVELOPMENT-SNAPSHOT-2018-07-17-a)
-    # The only place where this breaks down is when there is no date
-    # in the filename typically because it's a release or something special.
-    # If that's the case, we don't want to automate it, but instead do it
-    # manually because that version is likely one we're going to actually
-    # want to release to Fedora.
     dt = ""
     try:
-        dt = datetime.datetime.strptime(mid(s, 31, len(s)-31-2), '%Y-%m-%d').date()
+        dt = datetime.datetime.strptime(mid(s, 27, len(s)-27-2), '%Y-%m-%d').date()
     except ValueError:
-        print("Could not convert " + s + " to a date; special version?")
+        print("Could not convert " + s + " to a date")
         dt = ""
 
     return dt
@@ -90,7 +86,7 @@ def process(post, postDate):
     # increment it and return it so we have it for the changelog
     spec, pn = changePackageNumber(spec)
     # Now we need to write out the changelog
-    cl = '%changelog\n* ' + datetime.datetime.now().strftime('%a %b %d %Y') + ' Ron Olson <tachoknight@gmail.com> 4.2-0.' + str(pn) + '.' + newDate + 'git' + gitHash + '\n' + '- ' + 'Updated to ' + post.title
+    cl = '%changelog\n* ' + datetime.datetime.now().strftime('%a %b %d %Y') + ' Ron Olson <tachoknight@gmail.com> 5.0-0.' + str(pn) + '.' + newDate + 'git' + gitHash + '\n' + '- ' + 'Updated to ' + post.title
     spec = spec.replace('%changelog', cl)
 
     nf = open('swift-lang.spec', 'w')
@@ -119,7 +115,7 @@ d = feedparser.parse("https://github.com/apple/swift/releases.atom")
 print("Gonna go through them...")
 for post in d.entries:    
     print(post.title)
-    if left(post.title, 9) == 'swift-4.2':        
+    if left(post.title, 6) == 'swift-':        
         postDate = getDate(post.title)
         # Okay, is this date newer than the last time we
         # processed anything?
