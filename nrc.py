@@ -17,7 +17,7 @@ def mid(s, offset, amount):
 
 def getDate(s):
     # Because we know the format of the string, this is generally safe to do
-    # (e.g. swift-4.2-DEVELOPMENT-SNAPSHOT-2018-07-17-a)
+    # (e.g. swift-5.0-DEVELOPMENT-SNAPSHOT-2018-12-04-a)
     # The only place where this breaks down is when there is no date
     # in the filename typically because it's a release or something special.
     # If that's the case, we don't want to automate it, but instead do it
@@ -90,7 +90,7 @@ def process(post, postDate):
     # increment it and return it so we have it for the changelog
     spec, pn = changePackageNumber(spec)
     # Now we need to write out the changelog
-    cl = '%changelog\n* ' + datetime.datetime.now().strftime('%a %b %d %Y') + ' Ron Olson <tachoknight@gmail.com> 4.2-0.' + str(pn) + '.' + newDate + 'git' + gitHash + '\n' + '- ' + 'Updated to ' + post.title
+    cl = '%changelog\n* ' + datetime.datetime.now().strftime('%a %b %d %Y') + ' Ron Olson <tachoknight@gmail.com> 5.0-0.' + str(pn) + '.' + newDate + 'git' + gitHash + '\n' + '- ' + 'Updated to ' + post.title
     spec = spec.replace('%changelog', cl)
 
     nf = open('swift-lang.spec', 'w')
@@ -119,7 +119,7 @@ d = feedparser.parse("https://github.com/apple/swift/releases.atom")
 print("Gonna go through them...")
 for post in d.entries:    
     print(post.title)
-    if left(post.title, 9) == 'swift-4.2':        
+    if left(post.title, 9) == 'swift-5.0':        
         postDate = getDate(post.title)
         # Okay, is this date newer than the last time we
         # processed anything?
